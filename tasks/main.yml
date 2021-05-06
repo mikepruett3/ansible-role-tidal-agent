@@ -17,14 +17,14 @@
 - name: "Download installer package from local repository"
   unarchive:
     src: "{{ software_url }}/{{ package_name }}"
-    dest: "/root/software/{{ package_name.split('.')[0] }}"
+    dest: "/root/software/{{ package_name.split('.zip')[0] }}"
     remote_src: yes
     validate_certs: no
   when: package.stat.exists != True
 
 - name: "Change the execute permissions of the installer script"
   file:
-    path: "/root/software/{{ package_name.split('.')[0] }}/install.sh"
+    path: "/root/software/{{ package_name.split('.zip')[0] }}/install.sh"
     owner: root
     group: root
     mode: 0777
@@ -32,5 +32,5 @@
 - name: "Install Tidal Agent, if not already installed"
   command: ./install.sh
   args:
-    chdir: "/root/software/{{ package_name.split('.')[0] }}/"
+    chdir: "/root/software/{{ package_name.split('.zip')[0] }}/"
     #creates:
