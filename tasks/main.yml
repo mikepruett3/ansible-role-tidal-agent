@@ -10,7 +10,7 @@
       package:
         name: "python3-pexpect"
       when:
-        - "'python3-pexpect' not in ansible_facts.package"
+        - "'python3-pexpect' not in ansible_facts.packages"
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version == '8'
 
