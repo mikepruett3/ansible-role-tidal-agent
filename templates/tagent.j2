@@ -5,10 +5,10 @@
 # ====================================================================
 
 [config]
-agents={{ ansible_hostname.split('.')[0].upper() }}
+agents={{ inventory_hostname.split('.')[0].upper() }}
 
 ovb=tidaldebug
 
-[{{ ansible_hostname.split('.')[0].upper() }}]
+[{{ inventory_hostname.split('.')[0].upper() }}]
 port=5912
 java=/usr/java/default/bin
