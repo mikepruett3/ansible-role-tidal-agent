@@ -21,7 +21,7 @@
 
 - name: "Check if installer package already exist"
   stat:
-    path: "/root/software/{{ package_name }}"
+    path: "/root/software/{{ package_name.split('.zip')[0] }}"
   register: package
 
 - name: "Download installer package from local repository"
@@ -41,7 +41,7 @@
 
 - name: "Install Tidal Agent, if not already installed"
   expect:
-    echo: yes
+    echo: no
     command: ./install.sh
     chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
     #creates:
