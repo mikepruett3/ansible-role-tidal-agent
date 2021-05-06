@@ -1,2 +1,36 @@
 ---
-# tasks file for ansible-role-tidal-agent/
+- name: "Gather the package facts"
+  ansible.builtin.package_facts:
+    manager: auto
+  when: ansible_facts.packages is not defined
+
+- name: "Create software directory under root homedir, if it does not exist"
+  file:
+    path: "/root/software/{{ package_name.split('.')[0] }}"
+    state: directory
+
+- name: "Check if installer package already exist"
+  stat:
+    path: "/root/software/{{ package_name }}"
+  register: package
+
+- name: "Download installer package from local repository"
+  unarchive:
+    src: "{{ software_url }}/{{ package_name }}"
+    dest: "/root/software/{{ package_name.split('.')[0] }}"
+    remote_src: yes
+    validate_certs: no
+  when: package.stat.exists != True
+
+- name: "Change the execute permissions of the installer script"
+  file:
+    path: "/root/software/{{ package_name.split('.')[0] }}/install.sh"
+    owner: root
+    group: root
+    mode: 0777
+
+- name: "Install Tidal Agent, if not already installed"
+  command: ./install.sh
+  args:
+    chdir: "/root/software/{{ package_name.split('.')[0] }}/"
+    #creates:
