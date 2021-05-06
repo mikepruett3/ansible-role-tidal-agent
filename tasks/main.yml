@@ -41,12 +41,12 @@
 
 - name: "Install Tidal Agent, if not already installed"
   expect:
+    echo: yes
     command: ./install.sh
     chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
     #creates:
     responses:
-      Question:
-        - "y"
-        - "root"
-        - "y"
-        - "q"
+      (.*)Continue to install(.*): "y"
+      (.*)Which user should own the  files(.*): "root"
+      (.*)Are these selections OK(.*): "y"
+      (.*)Enter choice(.*): "q"
