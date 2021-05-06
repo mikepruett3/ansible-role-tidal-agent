@@ -41,12 +41,20 @@
 
 - name: "Install Tidal Agent, if not already installed"
   expect:
-    echo: no
+    echo: yes
     command: ./install.sh
     chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
-    #creates:
+    creates: /opt/TIDAL/Agent/bin/tagent
     responses:
       (.*)Continue to install(.*): "y"
       (.*)Which user should own the  files(.*): "root"
       (.*)Are these selections OK(.*): "y"
       (.*)Enter choice(.*): "q"
+
+- name: "Deploy Tidal Agent INI file"
+  template:
+    src: tagent.j2
+    dest: /opt/TIDAL/Agent/bin/tagent.ini
+    owner: root
+    group: root
+    mode: 0700

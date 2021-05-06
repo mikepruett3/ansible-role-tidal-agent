@@ -1,0 +1,14 @@
+# {{ ansible_managed | comment }}
+
+# ====================================================================
+# Agent Configuration Information
+# ====================================================================
+
+[config]
+agents={{ ansible_hostname.split('.')[0].upper() }}
+
+ovb=tidaldebug
+
+[{{ ansible_hostname.split('.')[0].upper() }}]
+port=5912
+java=/usr/java/default/bin
