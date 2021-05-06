@@ -30,7 +30,13 @@
     mode: 0777
 
 - name: "Install Tidal Agent, if not already installed"
-  command: ./install.sh
-  args:
+  expect:
+    command: ./install.sh
     chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
     #creates:
+    responses:
+      Question:
+        - "y"
+        - "root"
+        - "y"
+        - "q"
