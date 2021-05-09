@@ -1,2 +1,8 @@
 ---
-# handlers file for ansible-role-tidal-agent/
+- name: "Stop Tidal Agent"
+  command: /opt/TIDAL/Agent/bin/tagent {{ inventory_hostname.split('.')[0].upper() }} stop
+  listen: "Restart Tidal Agent"
+
+- name: "Start Tidal Agent"
+  command: /opt/TIDAL/Agent/bin/tagent {{ inventory_hostname.split('.')[0].upper() }} start
+  listen: "Restart Tidal Agent"

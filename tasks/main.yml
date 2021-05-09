@@ -58,3 +58,4 @@
     owner: root
     group: root
     mode: 0700
+    notify: "Restart Tidal Agent"
