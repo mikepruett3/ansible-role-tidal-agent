@@ -67,3 +67,16 @@
     group: root
     mode: 0700
   notify: "Restart Tidal Agent"
+
+- name: "Tidal Agent Init Scripts"
+  block:
+    - name: "Deploy Tidal Agent init script (RHEL7+)"
+      template:
+        src: systemd.j2
+        dest: /etc/systemd/system/tidal-agent.service
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version >= '7'
