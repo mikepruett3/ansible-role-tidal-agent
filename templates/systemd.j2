@@ -1,0 +1,13 @@
+# {{ ansible_managed | comment }}
+
+[Unit]
+Description=Tidal Agent
+
+[Service]
+Type=simple
+ExecStart=/opt/TIDAL/Agent/bin/tagent {{ inventory_hostname.split('.')[0].upper() }} start
+ExecStop=/opt/TIDAL/Agent/bin/tagent {{ inventory_hostname.split('.')[0].upper() }} stop
+
+[Install]
+WantedBy=multi-user.target
+Alias=tidal tagent ta
