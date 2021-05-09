@@ -19,7 +19,7 @@
   register: shell
 
 - name: "Set JAVA_HOME fact"
-  set_facts:
+  set_fact:
     java_home: "{{ shell.stdout }}/bin/"
 
 - name: "Create software directory under root homedir, if it does not exist"
