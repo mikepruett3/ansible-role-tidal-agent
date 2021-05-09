@@ -15,4 +15,4 @@ sslvldcrt=n
 
 [{{ inventory_hostname.split('.')[0].upper() }}]
 port=5912
-java=/usr/java/default/bin
+java={{ java_home.stdout }}
