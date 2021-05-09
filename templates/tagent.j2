@@ -12,7 +12,7 @@ logdays=14
 logsize=10485760
 sslvldcrt=n
 #ovb=tidaldebug
+java={{ java_home.stdout }}
 
 [{{ inventory_hostname.split('.')[0].upper() }}]
 port=5912
-java={{ java_home.stdout }}/
