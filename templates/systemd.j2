@@ -10,4 +10,4 @@ ExecStop=/opt/TIDAL/Agent/bin/tagent {{ inventory_hostname.split('.')[0].upper()
 
 [Install]
 WantedBy=multi-user.target
-Alias=tidal tagent ta
+Alias=tidal-agent tidal tagent ta
