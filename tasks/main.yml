@@ -68,7 +68,7 @@
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '7'
     - name: "Install Tidal Agent, if not already installed (RHEL7)"
-      shell: expect script.exp
+      command: expect script.exp
       args:
         chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
         creates: /opt/TIDAL/Agent/bin/tagent
