@@ -108,7 +108,7 @@
         owner: root
         group: root
         mode: 0644
-        force: yes
+      force: yes
       notify: "Stop Tidal Agent"
       when:
         - ansible_os_family == 'RedHat'
