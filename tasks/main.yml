@@ -39,11 +39,6 @@
     path: "/root/software/{{ package_name.split('.zip')[0] }}"
     state: directory
 
-#- name: "Check if installer package already exist"
-#  stat:
-#    path: "/root/software/{{ package_name.split('.zip')[0] }}"
-#  register: package
-
 - name: "Download installer package from local repository"
   unarchive:
     src: "{{ software_url }}/{{ package_name }}"
@@ -51,7 +46,6 @@
     creates: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
     remote_src: yes
     validate_certs: no
-  #when: package.stat.exists != True
 
 - name: "Change the execute permissions of the installer script"
   file:
@@ -59,6 +53,7 @@
     owner: root
     group: root
     mode: 0777
+    state: file
 
 - name: "Install Tidal Agent, if not already installed"
   expect:
