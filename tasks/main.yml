@@ -24,7 +24,9 @@
 - name: "Install Java, if not already installed"
   package:
     name: 'java-latest-openjdk'
-  when: '"java-latest-openjdk" not in ansible_facts.packages' or '"jdk-*" in ansible_facts.packages'
+  when:
+    - '"java-latest-openjdk" not in ansible_facts.packages'
+    - '"jdk-*" not in ansible_facts.packages'
 
 - name: "Find the JAVA_HOME from the host"
   shell: type -p java|xargs readlink -f|xargs dirname|xargs dirname
