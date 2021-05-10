@@ -16,8 +16,6 @@ cd "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.z
 
 spawn ./install.sh
 
-#match_max 100000
-
 expect "Continue to install?*"
 send -- "y\r"
 
@@ -31,4 +29,3 @@ expect " Enter choice {q}:* "
 send -- "q\r"
 
 expect eof
-#send "exit\r"
