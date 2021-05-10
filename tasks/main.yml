@@ -60,7 +60,6 @@
     - name: "Install Tidal Agent, if not already installed (RHEL7)"
       shell: |
         set timeout -l
-
         spawn ./install.sh
 
         expect "Continue to install? (y/n) \[n\]:"
@@ -75,7 +74,7 @@
         expect "Enter choice {q}: "
         send -- "q\r"
 
-        expect eof
+        exit 0
       args:
         executable: /bin/expect
         chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
