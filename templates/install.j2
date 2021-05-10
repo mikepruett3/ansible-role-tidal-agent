@@ -11,21 +11,24 @@ if {$force_conservative} {
 }
 
 set timeout -1
-cd "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
-spawn ./install.sh
-match_max 100000
 
-expect "Continue to install? (y/n) \[n\]:"
+cd "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
+
+spawn ./install.sh
+
+#match_max 100000
+
+expect "Continue to install?*"
 send -- "y\r"
 
-expect "Which user should own the  files? \[\]:"
+expect "Which user should own the  files?*"
 send -- "root\r"
 
-expect "Are these selections OK? (y/n/q)  \[y\]:"
+expect "Are these selections OK?*"
 send -- "y\r"
 
-expect " Enter choice {q}: "
+expect " Enter choice {q}:* "
 send -- "q\r"
 
-expect "$ "
-send "exit\r"
+expect eof
+#send "exit\r"
