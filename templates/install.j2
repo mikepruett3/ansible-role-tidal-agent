@@ -14,152 +14,17 @@ set timeout 100
 cd "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
 spawn ./install.sh
 match_max 100000
-expect -exact "\[H\[J========================================\r
-TIDAL Agent For Unix, Version 3.3\r
-========================================\r
-+--------------------------------------+\r
-|@@@@@@ @@@@@@ @@@@@@    @@@@   @@     |      -> Warning <-\r
-|  @@     @@    @@  @@  @@  @@  @@     |\r
-|  @@     @@    @@  @@  @@  @@  @@     |   Make sure you  have\r
-|  @@     @@    @@  @@  @@@@@@  @@     |   a  current   backup\r
-|  @@     @@    @@  @@  @@  @@  @@     |   before   installing\r
-|  @@   @@@@@@ @@@@@@   @@  @@  @@@@@@ |   any new products or\r
-|                                      |   upgrades!\r
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ |\r
-|@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ |\r
-+--------------------------------------+\r
-\r
-\r
-Continue to install? (y/n) \[n\]:"
+
+expect "Continue to install? (y/n) \[n\]:"
 send -- "y\r"
-expect -exact "y\r
-\[H\[J\[H\[JUsers on this system:\r
---------------------------------------------------------------------\r
-root        bin         daemon      adm         lp          \r
-sync        shutdown    halt        mail        operator    \r
-games       ftp         nobody      systemd-networkdbus        \r
-polkitd     libstoragemgmtabrt        rpc         chrony      \r
-tss         sshd        postfix     ntp         tcpdump     \r
-SVC-FW1-ANSIBLE\r
---------------------------------------------------------------------\r
-Which user should own the  files? \[\]:"
+
+expect "Which user should own the  files? \[\]:"
 send -- "root\r"
-expect -exact "root\r
---------------------------------------------------------------------\r
-\r
-\r
-We recommend the use of the following dir for installation: \r
-\r
-    Installation Dir ............. \[/opt/TIDAL/Agent\]\r
-\r
-\r
---------------------------------------------------------------------\r
-Are these selections OK? (y/n/q)  \[y\]:"
+
+expect "Are these selections OK? (y/n/q)  \[y\]:"
 send -- "y\r"
-expect -exact "y\r
-mv: cannot stat ‘/opt/TIDAL/Agent/lib/*.jar’: No such file or directory\r
-mv: cannot stat ‘/opt/TIDAL/Agent/lib/TA*.*’: No such file or directory\r
-bin/\r
-bin/_tagent.ini\r
-bin/oem.cfg\r
-bin/tagent\r
-bin/AIX/\r
-bin/AIX/tagent\r
-bin/DU32/\r
-bin/DU32/tagent\r
-bin/HP-UX11/\r
-bin/HP-UX11/tagent\r
-bin/HP-UX11i/\r
-bin/HP-UX11i/tagent\r
-bin/LINUX/\r
-bin/LINUX/tagent\r
-bin/LINUX32/\r
-bin/LINUX32/tagent\r
-bin/LINUX-PPC/\r
-bin/LINUX-PPC/tagent\r
-bin/LINUX-PPCLE/\r
-bin/LINUX-PPCLE/tagent\r
-bin/SCO/\r
-bin/SCO/tagent\r
-bin/SOL2/\r
-bin/SOL2/tagent\r
-bin/SOL2X86/\r
-bin/SOL2X86/tagent\r
-lib/\r
-lib/TAgent.jar\r
-lib/agutil.jar\r
-lib/aws-java-sdk-core-1.11.860.jar\r
-lib/aws-java-sdk-s3-1.11.860.jar\r
-lib/commons-codec-1.11.jar\r
-lib/commons-logging-1.1.3.jar\r
-lib/httpclient-4.5.9.jar\r
-lib/httpcore-4.4.11.jar\r
-lib/jackson-annotations-2.11.2.jar\r
-lib/jackson-core-2.11.2.jar\r
-lib/jackson-databind-2.11.2.jar\r
-lib/job\r
-lib/joda-time-2.10.6.jar\r
-lib/license.txt\r
-lib/ocsexit\r
-lib/setexit\r
-lib/AIX/\r
-lib/AIX/tjb64\r
-lib/AIX/job\r
-lib/AIX/setexit\r
-lib/AIX/tjb\r
-lib/DU32/\r
-lib/DU32/job\r
-lib/DU32/setexit\r
-lib/DU32/tjb\r
-lib/HP-UX11/\r
-lib/HP-UX11/job\r
-lib/HP-UX11/setexit\r
-lib/HP-UX11/tjb\r
-lib/HP-UX11i/\r
-lib/HP-UX11i/job\r
-lib/HP-UX11i/setexit\r
-lib/HP-UX11i/tjb\r
-lib/LINUX/\r
-lib/LINUX/job\r
-lib/LINUX/setexit\r
-lib/LINUX/tjb\r
-lib/LINUX32/\r
-lib/LINUX32/job\r
-lib/LINUX32/setexit\r
-lib/LINUX32/tjb\r
-lib/LINUX-PPC/\r
-lib/LINUX-PPC/job\r
-lib/LINUX-PPC/setexit\r
-lib/LINUX-PPC/tjb\r
-lib/LINUX-PPCLE/\r
-lib/LINUX-PPCLE/job\r
-lib/LINUX-PPCLE/setexit\r
-lib/LINUX-PPCLE/tjb\r
-lib/SCO/\r
-lib/SCO/job\r
-lib/SCO/setexit\r
-lib/SCO/tjb\r
-lib/SOL2/\r
-lib/SOL2/job\r
-lib/SOL2/setexit\r
-lib/SOL2/tjb\r
-lib/SOL2X86/\r
-lib/SOL2X86/job\r
-lib/SOL2X86/setexit\r
-lib/SOL2X86/tjb\r
-Installed, Starting Agent Configuration\r
-\[H\[J\r
-============================================\r
-Agent Configuration Menu\r
-============================================\r
-\r
- 1. Add Instance\r
- 2. Edit Instance\r
- 3. Delete Instance\r
- 4. Java Runtime Directory\r
-\r
- q. Quit Install\r
-\r
- Enter choice {q}: "
+
+expect " Enter choice {q}: "
 send -- "q\r"
+
 expect eof
