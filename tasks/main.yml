@@ -97,7 +97,6 @@
     owner: root
     group: root
     mode: 0700
-  #notify: "Restart Tidal Agent"
 
 - name: "Tidal Agent Init Scripts"
   block:
@@ -108,7 +107,6 @@
         owner: root
         group: root
         mode: 0644
-      notify: "Stop Tidal Agent"
       when:
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version >= '7'
@@ -117,7 +115,7 @@
   service:
     name: "tidal-agent"
     enabled: yes
-    state: started
+    state: restarted
 
 - name: "Uninstall expect (RHEL7)"
   package:
