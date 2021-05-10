@@ -36,8 +36,7 @@
 
 - name: "Create software directory under root homedir, if it does not exist"
   file:
-    #path: "/root/software/{{ package_name.split('.zip')[0] }}"
-    path: "/root/software"
+    path: "/root/software/{{ package_name.split('.zip')[0] }}"
     state: directory
 
 #- name: "Check if installer package already exist"
