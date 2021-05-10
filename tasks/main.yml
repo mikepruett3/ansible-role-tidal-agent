@@ -90,7 +90,7 @@
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version == '8'
 
-- name: "Deploy Tidal Agent INI file"
+- name: "Deploy Tidal Agent configuration .ini file"
   template:
     src: tagent.j2
     dest: /opt/TIDAL/Agent/bin/tagent.ini
