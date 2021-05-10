@@ -108,10 +108,11 @@
         owner: root
         group: root
         mode: 0644
-      notify: "Stop Tidal Agent"
+        force: yes
       when:
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version >= '7'
+  notify: "Stop Tidal Agent"
 
 - name: "Install and Enable Tidal Agent Init Scripts"
   service:
