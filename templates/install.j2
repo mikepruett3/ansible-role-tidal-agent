@@ -10,7 +10,7 @@ if {$force_conservative} {
 	}
 }
 
-set timeout 100
+set timeout -1
 cd "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
 spawn ./install.sh
 match_max 100000
