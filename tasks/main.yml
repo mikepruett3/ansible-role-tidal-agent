@@ -71,10 +71,7 @@
       command: ./script.exp
       args:
         chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
-        #creates: /opt/TIDAL/Agent/bin/tagent
-      #raw: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/script.exp"
-      #chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
-      #creates: /opt/TIDAL/Agent/bin/tagent
+        creates: /opt/TIDAL/Agent/bin/tagent
       when:
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '7'
@@ -121,3 +118,11 @@
     name: "tidal-agent"
     enabled: yes
     state: started
+
+- name: "Uninstall expect (RHEL7)"
+  package:
+    name: "expect"
+    state: absent
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version <= '7'
