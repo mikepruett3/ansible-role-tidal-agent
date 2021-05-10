@@ -6,13 +6,13 @@
 
 - name: "Install Python PExpect module"
   block:
-    - name: "Install Pexpect Python module, if not already installed (RHEL7)"
+    - name: "Install expect, if not already installed (RHEL7)"
       package:
-        name: "pexpect"
+        name: "expect"
       when:
-        - '"pexpect" not in ansible_facts.packages'
+        - '"expect" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version == '7'
+        - ansible_distribution_major_version <= '7'
     - name: "Install Pexpect Python module, if not already installed (RHEL8)"
       package:
         name: "python3-pexpect"
@@ -56,16 +56,43 @@
     state: file
 
 - name: "Install Tidal Agent, if not already installed"
-  expect:
-    echo: yes
-    command: ./install.sh
-    chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
-    creates: /opt/TIDAL/Agent/bin/tagent
-    responses:
-      (.*)Continue to install(.*): "y"
-      (.*)Which user should own the  files(.*): "root"
-      (.*)Are these selections OK(.*): "y"
-      (.*)Enter choice(.*): "q"
+  block:
+    - name: "Install Tidal Agent, if not already installed (RHEL7)"
+      shell: |
+        set timeout 300
+
+        expect "Continue to install"
+        send "y\n"
+
+        expect "Which user should own the  files"
+        send "root\n"
+
+        expect "Are these selections OK"
+        send "y\n"
+
+        expect "Enter choice"
+        send "q\n"
+
+        exit 0
+      args:
+        executable: /usr/bin/expect
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '7'
+    - name: "Install Tidal Agent, if not already installed (RHEL8)"
+      expect:
+        echo: yes
+        command: ./install.sh
+        chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
+        creates: /opt/TIDAL/Agent/bin/tagent
+        responses:
+          (.*)Continue to install(.*): "y"
+          (.*)Which user should own the  files(.*): "root"
+          (.*)Are these selections OK(.*): "y"
+          (.*)Enter choice(.*): "q"
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version == '8'
 
 - name: "Deploy Tidal Agent INI file"
   template:
