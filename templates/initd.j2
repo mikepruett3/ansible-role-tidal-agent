@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+
+#
+# httpd        Startup script for the Tidal Agent
+#
+# chkconfig: - 20 99
+# description: Tidal Agent
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Path to the tidal-agent script, server binary, and short-form for messages.
+tidal_home=/opt/TIDAL/Agent
+agent={{ inventory_hostname.split('.')[0].upper() | quote }}
+prog=tagent
+lockfile=${LOCKFILE-/var/lock/subsys/tidal-agent}
+RETVAL=0
+
+# The semantics of these two functions differ from the way apachectl does
+# things -- attempting to start while running is a failure, and shutdown
+# when not running is also a failure.  So we just do it the way init scripts
+# are expected to behave here.
+start() {
+        echo -n $"Starting $prog: "
+        ${tidal_home}/bin/${prog} ${agent} start
+        RETVAL=$?
+        echo
+        [ $RETVAL = 0 ] && touch ${lockfile}
+        return $RETVAL
+}
+
+# When stopping httpd a delay of >10 second is required before SIGKILLing the
+# httpd parent; this gives enough time for the httpd parent to SIGKILL any
+# errant children.
+stop() {
+	echo -n $"Stopping $prog: "
+	${tidal_home}/bin/${prog} ${agent} stop
+	RETVAL=$?
+	echo
+	[ $RETVAL = 0 ] && rm -f ${lockfile}
+}
+
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+    ${tidal_home}/bin/${prog} ${agent} status
+	;;
+  restart)
+	stop
+	start
+	;;
+  *)
+	echo $"Usage: $prog {start|stop|restart|status}"
+	exit 1
+esac
+
+exit $RETVAL

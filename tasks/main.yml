@@ -112,6 +112,16 @@
 
 - name: "Tidal Agent Init Scripts"
   block:
+    - name: "Deploy Tidal Agent init script (RHEL6)"
+      template:
+        src: initd.j2
+        dest: /etc/init.d/tidal-agent
+        owner: root
+        group: root
+        mode: 0755
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '6'
     - name: "Deploy Tidal Agent init script (RHEL7+)"
       template:
         src: systemd.j2
