@@ -57,27 +57,21 @@
 
 - name: "Install Tidal Agent, if not already installed"
   block:
+    - name: "Deploy expect install script"
+      template:
+        src: install.j2
+        dest: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/script.exp"
+        owner: root
+        group: root
+        mode: 0777
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '7'
     - name: "Install Tidal Agent, if not already installed (RHEL7)"
-      shell: |
-        set timeout -l
-        spawn ./install.sh
-
-        expect "Continue to install? (y/n) \[n\]:"
-        send -- "y\r"
-
-        expect "Which user should own the  files? \[\]:"
-        send -- "root\r"
-
-        expect "Are these selections OK? (y/n/q) \[y\]:"
-        send -- "y\r"
-        
-        expect "Enter choice {q}: "
-        send -- "q\r"
-
-        exit 0
+      shell: expect script.exp
       args:
-        executable: /bin/expect
         chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
+        creates: /opt/TIDAL/Agent/bin/tagent
       when:
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '7'

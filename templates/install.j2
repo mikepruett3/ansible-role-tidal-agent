@@ -1,0 +1,18 @@
+#!/usr/bin/env expect
+
+set timeout -l
+spawn ./install.sh
+
+expect "Continue to install? (y/n) \[n\]:"
+send -- "y\r"
+
+expect "Which user should own the  files? \[\]:"
+send -- "root\r"
+
+expect "Are these selections OK? (y/n/q) \[y\]:"
+send -- "y\r"
+
+expect "Enter choice {q}: "
+send -- "q\r"
+
+expect eof
