@@ -7,14 +7,14 @@
 - name: "Install Python PExpect module"
   block:
     - name: "Install expect, if not already installed (RHEL7)"
-      package:
+      ansible.builtin.package:
         name: "expect"
       when:
         - '"expect" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '7'
     - name: "Install Pexpect Python module, if not already installed (RHEL8)"
-      package:
+      ansible.builtin.package:
         name: "python3-pexpect"
       when:
         - '"python3-pexpect" not in ansible_facts.packages'
@@ -24,14 +24,14 @@
 - name: "Install Java Development Kit (OpenJDK)"
   block:
     - name: "Install Java Development Kit (OpenJDK), if not already installed (RHEL6)"
-      package:
+      ansible.builtin.package:
         name: "java-1.8.0-openjdk"
       when:
         - '"java-1.8.0-openjdk" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version == '6'
     - name: "Install Java Development Kit (OpenJDK), if not already installed (RHEL7+)"
-      package:
+      ansible.builtin.package:
         name: "java-latest-openjdk"
       when:
         - '"java-latest-openjdk" not in ansible_facts.packages'
@@ -43,16 +43,16 @@
   register: shell
 
 - name: "Set JAVA_HOME fact"
-  set_fact:
+  ansible.builtin.set_fact:
     java_home: "{{ shell.stdout }}/bin/"
 
 - name: "Create software directory under root homedir, if it does not exist"
-  file:
+  ansible.builtin.file:
     path: "/root/software/{{ package_name.split('.zip')[0] }}"
     state: directory
 
 - name: "Download installer package from local repository"
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ software_url }}/{{ package_name }}"
     dest: "/root/software/{{ package_name.split('.zip')[0] }}"
     creates: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
@@ -60,7 +60,7 @@
     validate_certs: no
 
 - name: "Change the execute permissions of the installer script"
-  file:
+  ansible.builtin.file:
     path: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
     owner: root
     group: root
@@ -70,7 +70,7 @@
 - name: "Install Tidal Agent, if not already installed"
   block:
     - name: "Deploy expect install script"
-      template:
+      ansible.builtin.template:
         src: install.j2
         dest: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/script.exp"
         owner: root
@@ -88,7 +88,7 @@
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '7'
     - name: "Install Tidal Agent, if not already installed (RHEL8)"
-      expect:
+      ansible.builtin.expect:
         echo: yes
         command: ./install.sh
         chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
@@ -103,7 +103,7 @@
         - ansible_distribution_major_version == '8'
 
 - name: "Deploy Tidal Agent configuration .ini file"
-  template:
+  ansible.builtin.template:
     src: tagent.j2
     dest: /opt/TIDAL/Agent/bin/tagent.ini
     owner: root
@@ -113,7 +113,7 @@
 - name: "Tidal Agent Init Scripts"
   block:
     - name: "Deploy Tidal Agent init script (RHEL6)"
-      template:
+      ansible.builtin.template:
         src: initd.j2
         dest: /etc/init.d/tidal-agent
         owner: root
@@ -123,7 +123,7 @@
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version <= '6'
     - name: "Deploy Tidal Agent init script (RHEL7+)"
-      template:
+      ansible.builtin.template:
         src: systemd.j2
         dest: /etc/systemd/system/tidal-agent.service
         owner: root
@@ -134,13 +134,13 @@
         - ansible_distribution_major_version >= '7'
 
 - name: "Install and Enable Tidal Agent Init Scripts"
-  service:
+  ansible.builtin.service:
     name: "tidal-agent"
     enabled: yes
     state: restarted
 
 - name: "Uninstall expect (RHEL7)"
-  package:
+  ansible.builtin.package:
     name: "expect"
     state: absent
   when:
