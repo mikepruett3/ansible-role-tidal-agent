@@ -6,7 +6,7 @@ Ansible role to install [Tidal Workload Automation](https://www.tidalsoftware.co
 Requirements
 ------------
 
-The role does not require anyting to run on RHEL and its derivatives. It will install OpenJDK to satisfy the Tidal Workload Automation agents Java requirement.
+The role does not require anyting to run on RHEL and its derivatives. It will install OpenJDK to satisfy the Tidal Workload Automation agents Java requirement. This role also assumes that you have the software package located on a web server somewhere in your environment.
 
 Role Variables
 --------------
