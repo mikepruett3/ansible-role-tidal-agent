@@ -41,7 +41,7 @@
       ansible.builtin.package:
         name: "java-1.8.0-openjdk"
       when:
-        - '"java-1.8.0-openjdk*" not in ansible_facts.packages'
+        - '"java-1.8.0-openjdk" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version >= '8'
 
