@@ -30,13 +30,20 @@
         - '"java-1.8.0-openjdk" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
         - ansible_distribution_major_version == '6'
-    - name: "Install Java Development Kit (OpenJDK), if not already installed (RHEL7+)"
+    - name: "Install Java Development Kit (OpenJDK), if not already installed (RHEL7)"
       ansible.builtin.package:
         name: "java-latest-openjdk"
       when:
         - '"java-latest-openjdk" not in ansible_facts.packages'
         - ansible_os_family == 'RedHat'
-        - ansible_distribution_major_version >= '7'
+        - ansible_distribution_major_version == '7'
+    - name: "Install Java Development Kit (OpenJDK), if not already installed (RHEL8)"
+      ansible.builtin.package:
+        name: "java-1.8.0-openjdk"
+      when:
+        - '"java-1.8.0-openjdk" not in ansible_facts.packages'
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version >= '8'
 
 - name: "Find the JAVA_HOME from the host"
   shell: type -p java|xargs readlink -f|xargs dirname|xargs dirname
