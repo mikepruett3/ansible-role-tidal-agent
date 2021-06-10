@@ -32,8 +32,6 @@ Any Java or JDK (including OpenJDK and OracleJDK). Role will install OpenJDK by 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
 ``` yaml
     - hosts: servers
       roles:
@@ -51,4 +49,4 @@ MIT
 Author Information
 ------------------
 
-Role created by [mikepruett3](https://github.com/mikepruett3) on [Github.com](https://github.com/mikepruett3)
+Role created by [mikepruett3](https://github.com/mikepruett3) on [Github.com](https://github.com/mikepruett3/ansible-role-tidal-agent)
