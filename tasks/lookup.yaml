@@ -39,5 +39,6 @@
     install: true
   when:
     - tidal_home is not defined
-    - result.failed is true
+    #- result.failed is true
+
 
