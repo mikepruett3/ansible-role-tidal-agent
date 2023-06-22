@@ -7,9 +7,6 @@
   register: result
   ignore_errors: true
 
-- debug:
-    var: result
-
 - name: "Set Facts for JAVA_HOME Environment Variable"
   ansible.builtin.set_fact:
     java_home: "{{ result.stdout | split('=') | last }}"
@@ -22,7 +19,6 @@
     java_installed: false
   when:
     - java_home is not defined
-    #- result.failed is true
 
 - name: "Check for Tidal Home directory"
   ansible.builtin.stat:
@@ -37,7 +33,6 @@
     - result.stat.exists
     - result.stat.isdir
     - not result.failed | bool
-    #- result.failed is false
 
 - name: "Set Facts for Install variable"
   ansible.builtin.set_fact:
