@@ -7,6 +7,9 @@
   register: result
   ignore_errors: true
 
+- debug:
+    var: result
+
 - name: "Set Facts for JAVA_HOME Environment Variable"
   ansible.builtin.set_fact:
     java_home: "{{ result.stdout | split('=') | last }}"
