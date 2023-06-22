@@ -14,7 +14,7 @@
   ansible.builtin.set_fact:
     java_home: "{{ result.stdout | split('=') | last }}"
   when:
-    - result.stat.exists
+    - result.rc == 0
     - not result.failed | bool
 
 - name: "Set Facts for Java Installed variable"
