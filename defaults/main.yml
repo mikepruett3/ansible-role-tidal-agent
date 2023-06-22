@@ -2,3 +2,4 @@
 # defaults file for ansible-role-tidal-agent/
 software_url: "http://www.example.org"
 package_name: "tidal-agent-installer.zip"
+package_version: "17.3.0"

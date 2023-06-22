@@ -1,0 +1,13 @@
+---
+# Assert tasks file for ansible-role-tidal-agent
+
+- name: "Test if Software URL and Package Information is set correctly"
+  ansible.builtin.assert:
+    that:
+      - software_url is defined
+      - software_url is string
+      - package_name is defined
+      - package_name is string
+      - package_version is defined
+      - package_version is string
+    quiet: yes

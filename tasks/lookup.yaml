@@ -1,0 +1,21 @@
+---
+# Lookup tasks file for ansible-role-tidal-agent
+
+- name: "Check for JAVA_HOME Environment Variable"
+  ansible.builtin.shell:
+    cmd: . /etc/profile && (env | grep -iP "JAVA_HOME")
+  register: result
+  ignore_errors: true
+
+- name: "Set Facts for JAVA_HOME Environment Variable"
+  ansible.builtin.set_fact:
+    java_home: "{{ result.stdout | split('=') | last }}"
+  when:
+    - not result.failed | bool
+
+- name: "Set Facts for Java Installed variable"
+  ansible.builtin.set_fact:
+    java_installed: false
+  when:
+    - java_home is not defined
+    - result.failed is true
