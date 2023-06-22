@@ -13,6 +13,9 @@
   when:
     - not result.failed | bool
 
+- debug:
+    var: result
+
 - name: "Set Facts for Java Installed variable"
   ansible.builtin.set_fact:
     java_installed: false
@@ -20,13 +23,13 @@
     - java_home is not defined
     - result.failed is true
 
-- name: "Check for Tidal directory"
+- name: "Check for Tidal Home directory"
   ansible.builtin.stat:
     path: /opt/TIDAL/Agent/
   register: result
   ignore_errors: true
 
-- name: "Set Facts for Managesoft install directory"
+- name: "Set Facts for Tidal Home directory"
   ansible.builtin.set_fact:
     tidal_home: /opt/TIDAL/Agent/
   when:
@@ -39,6 +42,5 @@
     install: true
   when:
     - tidal_home is not defined
-    #- result.failed is true
 
 
