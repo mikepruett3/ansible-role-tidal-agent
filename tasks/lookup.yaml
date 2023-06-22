@@ -51,5 +51,6 @@
   ansible.builtin.set_fact:
     installed_version: "{{ result.stdout }}"
   when:
+    - tidal_home is defined
     - result.rc == 0
     - not result.failed | bool
