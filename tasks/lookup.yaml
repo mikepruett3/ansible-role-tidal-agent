@@ -40,4 +40,16 @@
   when:
     - tidal_home is not defined
 
+- name: "Get the version of installed Tidal Agent"
+  ansible.builtin.shell:
+    cmd: "{{ tidal_home }}/bin/tagent -status | tail -n 1 | awk '{ print $2 }' | head -c -2"
+  register: result
+  when:
+    - tidal_home is defined
 
+- name: "Set Facts for Tidal Agent Installed Version"
+  ansible.builtin.set_fact:
+    installed_version: "{{ result.stdout }}"
+  when:
+    - result.rc == 0
+    - not result.failed | bool
