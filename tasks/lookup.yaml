@@ -22,13 +22,13 @@
 
 - name: "Check for Tidal Home directory"
   ansible.builtin.stat:
-    path: /opt/TIDAL/Agent/
+    path: /opt/TIDAL/Agent
   register: result
   ignore_errors: true
 
 - name: "Set Facts for Tidal Home directory"
   ansible.builtin.set_fact:
-    tidal_home: /opt/TIDAL/Agent/
+    tidal_home: /opt/TIDAL/Agent
   when:
     - result.stat.exists
     - result.stat.isdir
