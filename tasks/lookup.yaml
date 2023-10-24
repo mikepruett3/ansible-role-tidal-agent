@@ -42,7 +42,7 @@
 
 - name: "Get the version of installed Tidal Agent"
   ansible.builtin.shell:
-    cmd: "{{ tidal_home }}/bin/tagent -status | tail -n 1 | awk '{ print $2 }' | head -c -2"
+    cmd: "cat {{ tidal_home }}/{{ ansible_facts['hostname'] | lower }}/agt.prp | grep -i 'AgentVersion=' | cut -d'=' -f2"
   register: result
   when:
     - tidal_home is defined
