@@ -60,4 +60,4 @@
     upgrade: true
   when:
     - installed_version is defined
-    - installed_version < package_version
+    - package_version >= installed_version
