@@ -1,0 +1,142 @@
+---
+# Install tasks file for ansible-role-tidal-agent
+
+- name: "Test if install boolean variable is set correctly"
+  ansible.builtin.assert:
+    that:
+      - install is defined
+      - install is boolean
+      #- java_installed is defined
+      #- java_installed is boolean
+    quiet: yes
+
+- name: "Install required packages, if not already installed (yum)"
+  ansible.builtin.yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - expect
+    - java-latest-openjdk
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Install required packages, if not already installed (dnf)"
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+    disable_gpg_check: yes
+  with_items:
+    - python3-pexpect
+    - java-latest-openjdk
+  when:
+    - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Find the JAVA_HOME from the host"
+  ansible.builtin.shell:
+    cmd: type -p java|xargs readlink -f|xargs dirname|xargs dirname
+  register: shell
+
+- name: "Set JAVA_HOME fact"
+  ansible.builtin.set_fact:
+    java_home: "{{ shell.stdout }}/bin/"
+
+- name: "Create software directory under root homedir, if it does not exist"
+  ansible.builtin.file:
+    path: "/root/software/{{ package_name.split('.zip')[0] }}"
+    state: directory
+
+- name: "Download installer package from local repository"
+  ansible.builtin.unarchive:
+    src: "{{ software_url }}/{{ package_name }}"
+    dest: "/root/software/{{ package_name.split('.zip')[0] }}"
+    creates: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
+    remote_src: yes
+    validate_certs: no
+
+- name: "Change the execute permissions of the installer script"
+  ansible.builtin.file:
+    path: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
+    owner: root
+    group: root
+    mode: 0777
+    state: file
+
+- name: "Install Tidal Agent, if not already installed"
+  block:
+    - name: "Deploy expect install script"
+      ansible.builtin.template:
+        src: install.j2
+        dest: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/script.exp"
+        owner: root
+        group: root
+        mode: 0777
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '7'
+    - name: "Install Tidal Agent, if not already installed (RHEL7)"
+      command: ./script.exp
+      args:
+        chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
+        creates: /opt/TIDAL/Agent/bin/tagent
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '7'
+    - name: "Install Tidal Agent, if not already installed (RHEL8)"
+      ansible.builtin.expect:
+        echo: yes
+        command: ./install.sh
+        chdir: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/"
+        creates: /opt/TIDAL/Agent/bin/tagent
+        responses:
+          (.*)Continue to install(.*): "y"
+          (.*)Which user should own the  files(.*): "root"
+          (.*)Are these selections OK(.*): "y"
+          (.*)Enter choice(.*): "q"
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version == '8'
+
+- name: "Deploy Tidal Agent configuration .ini file"
+  ansible.builtin.template:
+    src: tagent.j2
+    dest: /opt/TIDAL/Agent/bin/tagent.ini
+    owner: root
+    group: root
+    mode: 0700
+
+- name: "Tidal Agent Init Scripts"
+  block:
+    - name: "Deploy Tidal Agent init script (RHEL6)"
+      ansible.builtin.template:
+        src: initd.j2
+        dest: /etc/init.d/tidal-agent
+        owner: root
+        group: root
+        mode: 0755
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version <= '6'
+    - name: "Deploy Tidal Agent init script (RHEL7+)"
+      ansible.builtin.template:
+        src: systemd.j2
+        dest: /etc/systemd/system/tidal-agent.service
+        owner: root
+        group: root
+        mode: 0644
+      when:
+        - ansible_os_family == 'RedHat'
+        - ansible_distribution_major_version >= '7'
+
+- name: "Install and Enable Tidal Agent Init Scripts"
+  ansible.builtin.service:
+    name: "tidal-agent"
+    enabled: yes
+    state: restarted
+
+- name: "Uninstall expect (RHEL7)"
+  ansible.builtin.package:
+    name: "expect"
+    state: absent
+  when:
+    - ansible_os_family == 'RedHat'
+    - ansible_distribution_major_version <= '7'
