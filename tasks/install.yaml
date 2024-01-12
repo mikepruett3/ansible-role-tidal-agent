@@ -61,13 +61,13 @@
     src: "{{ software_url }}/{{ package_name }}"
     dest: "/root/software/tidal/"
     #creates: "/root/software/{{ package_name.split('.zip')[0] }}/{{ package_name.split('.zip')[0] }}/install.sh"
-    creates: "/root/software/tidal/install.sh"
+    creates: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/install.sh"
     remote_src: yes
     validate_certs: no
 
 - name: "Change the execute permissions of the installer script"
   ansible.builtin.file:
-    path: "/root/software/tidal/install.sh"
+    path: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/install.sh"
     owner: root
     group: root
     mode: '0770'
