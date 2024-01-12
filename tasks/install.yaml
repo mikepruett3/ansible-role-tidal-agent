@@ -1,12 +1,12 @@
 ---
 # Install tasks file for ansible-role-tidal-agent
 
-#- name: "Test if install boolean variable is set correctly"
-#  ansible.builtin.assert:
-#    that:
-#      - install is defined
-#      - install is boolean
-#    quiet: yes
+- name: "Test if install boolean variable is set correctly"
+  ansible.builtin.assert:
+    that:
+      - install is defined
+      - install is boolean
+    quiet: yes
 
 - name: "Install required packages (yum)"
   ansible.builtin.yum:
@@ -22,6 +22,14 @@
     disable_gpg_check: yes
   when:
     - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Install required packages (apt)"
+  ansible.builtin.apt:
+    name: python3-pexpect
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'apt'
 
 - name: "Create software directory under root homedir, if it does not exist"
   ansible.builtin.file:
@@ -67,7 +75,7 @@
   when:
     - ansible_facts['pkg_mgr'] == 'yum'
 
-- name: "Install Tidal Agent, if not already installed (dnf)"
+- name: "Install Tidal Agent, if not already installed (dnf/apt)"
   ansible.builtin.expect:
     echo: yes
     command: ./install.sh
@@ -79,7 +87,7 @@
       (.*)Are these selections OK(.*): "y"
       (.*)Enter choice(.*): "q"
   when:
-    - ansible_facts['pkg_mgr'] == 'dnf'
+    - ansible_facts['pkg_mgr'] == 'dnf' or ansible_facts['pkg_mgr'] == 'apt'
 
 - name: "Deploy Tidal Agent configuration .ini file"
   ansible.builtin.template:
@@ -129,3 +137,10 @@
     disable_gpg_check: yes
   when:
     - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Uninstall expect package (apt)"
+  ansible.builtin.apt:
+    name: python3-pexpect
+    state: absent
+  when:
+    - ansible_facts['pkg_mgr'] == 'apt'
