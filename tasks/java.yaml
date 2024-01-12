@@ -33,7 +33,8 @@
 
 - name: "Find the JAVA_HOME from the host"
   ansible.builtin.shell:
-    cmd: type -p java|xargs readlink -f|xargs dirname|xargs dirname
+    #cmd: type -p java|xargs readlink -f|xargs dirname|xargs dirname
+    cmd: dirname $(dirname $(readlink -f $(which javac)))
   register: shell
 
 - name: "Set JAVA_HOME fact"
