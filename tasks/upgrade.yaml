@@ -1,0 +1,146 @@
+---
+# Upgrade tasks file for ansible-role-tidal-agent
+
+- name: "Test if upgrade boolean variable is set correctly"
+  ansible.builtin.assert:
+    that:
+      - upgrade is defined
+      - upgrade is boolean
+    quiet: yes
+
+- name: "Install required packages (yum)"
+  ansible.builtin.yum:
+    name: expect
+    state: present
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Install required packages (dnf)"
+  ansible.builtin.dnf:
+    name: python3-pexpect
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Install required packages (apt)"
+  ansible.builtin.apt:
+    name: python3-pexpect
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'apt'
+
+- name: "Create software directory under root homedir, if it does not exist"
+  ansible.builtin.file:
+    path: "/root/software/tidal"
+    state: directory
+
+- name: "Check if installer package already exist"
+  ansible.builtin.stat:
+    path: "/root/software/tidal/{{ package_name }}"
+  register: package
+
+- name: "Download installer package from local repository"
+  ansible.builtin.unarchive:
+    src: "{{ software_url }}/{{ package_name }}"
+    dest: "/root/software/tidal/"
+    creates: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/install.sh"
+    remote_src: yes
+    validate_certs: no
+
+- name: "Change the execute permissions of the installer script"
+  ansible.builtin.file:
+    path: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/install.sh"
+    owner: root
+    group: root
+    mode: '0770'
+    state: file
+
+- name: "Deploy expect install script (yum)"
+  ansible.builtin.template:
+    src: install.j2
+    dest: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/script.exp"
+    owner: root
+    group: root
+    mode: '0770'
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Install Tidal Agent, if not already installed (yum)"
+  command: ./script.exp
+  args:
+    chdir: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/"
+    creates: /opt/TIDAL/Agent/bin/tagent
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Install Tidal Agent, if not already installed (dnf/apt)"
+  ansible.builtin.expect:
+    echo: yes
+    command: ./install.sh
+    chdir: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/"
+    creates: /opt/TIDAL/Agent/bin/tagent
+    responses:
+      (.*)Continue to install(.*): "y"
+      (.*)Which user should own the  files(.*): "root"
+      (.*)Are these selections OK(.*): "y"
+      (.*)Enter choice(.*): "q"
+  when:
+    - ansible_facts['pkg_mgr'] == 'dnf' or ansible_facts['pkg_mgr'] == 'apt'
+
+#- name: "Deploy Tidal Agent configuration .ini file"
+#  ansible.builtin.template:
+#    src: tagent.j2
+#    dest: /opt/TIDAL/Agent/bin/tagent.ini
+#    owner: root
+#    group: root
+#    mode: '0700'
+
+#- name: "Deploy Tidal Agent init script (sysvinit)"
+#  ansible.builtin.template:
+#    src: initd.j2
+#    dest: /etc/init.d/tidal-agent
+#    owner: root
+#    group: root
+#    mode: '0750'
+#  when:
+#    - ansible_facts['service_mgr'] == 'sysvinit'
+
+#- name: "Deploy Tidal Agent init script (systemd)"
+#  ansible.builtin.template:
+#    src: systemd.j2
+#    dest: /etc/systemd/system/tidal-agent.service
+#    owner: root
+#    group: root
+#    mode: '0640'
+#  when:
+#    - ansible_facts['service_mgr'] == 'systemd'
+
+#- name: "Install and Enable Tidal Agent init script"
+#  ansible.builtin.service:
+#    name: "tidal-agent"
+#    enabled: yes
+#    state: restarted
+
+- name: "Uninstall expect package (yum)"
+  ansible.builtin.yum:
+    name: expect
+    state: absent
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Uninstall expect package (dnf)"
+  ansible.builtin.dnf:
+    name: python3-pexpect
+    state: absent
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Uninstall expect package (apt)"
+  ansible.builtin.apt:
+    name: python3-pexpect
+    state: absent
+  when:
+    - ansible_facts['pkg_mgr'] == 'apt'
