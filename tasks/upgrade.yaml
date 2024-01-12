@@ -71,7 +71,6 @@
   command: ./script.exp
   args:
     chdir: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/"
-    creates: /opt/TIDAL/Agent/bin/tagent
   when:
     - ansible_facts['pkg_mgr'] == 'yum'
 
@@ -80,7 +79,6 @@
     echo: yes
     command: ./install.sh
     chdir: "/root/software/tidal/{{ package_name.split('.zip')[0] }}/"
-    creates: /opt/TIDAL/Agent/bin/tagent
     responses:
       (.*)Continue to install(.*): "y"
       (.*)Which user should own the  files(.*): "root"
