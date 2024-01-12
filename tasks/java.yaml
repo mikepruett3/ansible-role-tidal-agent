@@ -1,0 +1,42 @@
+---
+# Java tasks file for ansible-role-tidal-agent
+
+- name: "Test if Java is installed"
+  ansible.builtin.assert:
+    that:
+      - java_installed is defined
+      - java_installed is boolean
+      - not java_installed | bool
+    quiet: yes
+
+- name: "Install required packages, if not already installed (yum)"
+  ansible.builtin.yum:
+    name: java-latest-openjdk
+    state: present
+  when:
+    - ansible_facts['pkg_mgr'] == 'yum'
+
+- name: "Install required packages, if not already installed (dnf)"
+  ansible.builtin.dnf:
+    name: java-latest-openjdk
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'dnf'
+
+- name: "Install required packages, if not already installed (apt)"
+  ansible.builtin.apt:
+    name: java-latest-openjdk
+    state: present
+    disable_gpg_check: yes
+  when:
+    - ansible_facts['pkg_mgr'] == 'apt'
+
+- name: "Find the JAVA_HOME from the host"
+  ansible.builtin.shell:
+    cmd: type -p java | xargs readlink -f | xargs dirname | xargs dirname
+  register: shell
+
+- name: "Set JAVA_HOME fact"
+  ansible.builtin.set_fact:
+    java_home: "{{ shell.stdout }}/bin/"
