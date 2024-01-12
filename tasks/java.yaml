@@ -32,7 +32,7 @@
     - ansible_facts['pkg_mgr'] == 'apt'
 
 - name: "Find the JAVA_HOME from the host"
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: type -p java | xargs readlink -f | xargs dirname | xargs dirname
   register: shell
 
