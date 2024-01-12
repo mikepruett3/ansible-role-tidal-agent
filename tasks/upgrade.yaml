@@ -68,6 +68,12 @@
   when:
     - ansible_facts['pkg_mgr'] == 'yum'
 
+- name: "Stop Tidal Agent Service"
+  ansible.builtin.service:
+    name: "tidal-agent"
+    enabled: yes
+    state: stopped
+
 - name: "Install Tidal Agent, if not already installed (yum)"
   command: ./script.exp
   args:
@@ -87,6 +93,17 @@
       (.*)Enter choice(.*): "q"
   when:
     - ansible_facts['pkg_mgr'] == 'dnf' or ansible_facts['pkg_mgr'] == 'apt'
+
+- name: "Delete the previous log files"
+  ansible.builtin.file:
+    path: "{{ tidal_home }}/{{ inventory_hostname.split('.')[0] | lower }}"
+    state: absent
+
+- name: "Start Tidal Agent Service"
+  ansible.builtin.service:
+    name: "tidal-agent"
+    enabled: yes
+    state: started
 
 #- name: "Deploy Tidal Agent configuration .ini file"
 #  ansible.builtin.template:
