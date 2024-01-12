@@ -14,7 +14,13 @@
     - result.rc == 0
     - not result.failed | bool
 
-- name: "Set Facts for Java Installed variable"
+- name: "Set Facts for Java Installed variable (TRUE)"
+  ansible.builtin.set_fact:
+    java_installed: true
+  when:
+    - java_home is defined
+
+- name: "Set Facts for Java Installed variable (FALSE)"
   ansible.builtin.set_fact:
     java_installed: false
   when:
@@ -49,7 +55,8 @@
 
 - name: "Set Facts for Tidal Agent Installed Version"
   ansible.builtin.set_fact:
-    installed_version: "{{ result.stdout }}"
+    installed_version: "{{ result.stdout | replace ('-','.') }}"
+    package_version: "{{ package_version | replace ('-','.') }}"
   when:
     - tidal_home is defined
     - result.rc == 0
@@ -60,4 +67,4 @@
     upgrade: true
   when:
     - installed_version is defined
-    - package_version >= installed_version
+    - package_version is ansible.builtin.version(installed_version, '>')
