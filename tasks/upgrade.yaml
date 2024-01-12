@@ -105,40 +105,6 @@
     enabled: yes
     state: started
 
-#- name: "Deploy Tidal Agent configuration .ini file"
-#  ansible.builtin.template:
-#    src: tagent.j2
-#    dest: /opt/TIDAL/Agent/bin/tagent.ini
-#    owner: root
-#    group: root
-#    mode: '0700'
-
-#- name: "Deploy Tidal Agent init script (sysvinit)"
-#  ansible.builtin.template:
-#    src: initd.j2
-#    dest: /etc/init.d/tidal-agent
-#    owner: root
-#    group: root
-#    mode: '0750'
-#  when:
-#    - ansible_facts['service_mgr'] == 'sysvinit'
-
-#- name: "Deploy Tidal Agent init script (systemd)"
-#  ansible.builtin.template:
-#    src: systemd.j2
-#    dest: /etc/systemd/system/tidal-agent.service
-#    owner: root
-#    group: root
-#    mode: '0640'
-#  when:
-#    - ansible_facts['service_mgr'] == 'systemd'
-
-#- name: "Install and Enable Tidal Agent init script"
-#  ansible.builtin.service:
-#    name: "tidal-agent"
-#    enabled: yes
-#    state: restarted
-
 - name: "Uninstall expect package (yum)"
   ansible.builtin.yum:
     name: expect
