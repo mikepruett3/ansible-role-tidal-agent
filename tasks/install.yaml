@@ -27,7 +27,6 @@
   ansible.builtin.apt:
     name: python3-pexpect
     state: present
-    disable_gpg_check: yes
   when:
     - ansible_facts['pkg_mgr'] == 'apt'
 
